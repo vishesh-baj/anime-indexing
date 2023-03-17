@@ -2,6 +2,10 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import animeService from "../../services/animeService";
 import { Dispatch } from "redux";
+import { setAnimePage } from "./homePageSlice";
+import { GetAnimePage } from "../../services/animeService/GetAnimePage";
+import { useAppDispatch } from "../../hooks";
+import HotAnime from "./HotAnime";
 interface IHomePageProps {}
 
 const Container = styled.div`
@@ -12,17 +16,19 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const actionDisPatch = (dispatch: Dispatch) => {
-  
-};
+const actionDisPatch = (dispatch: Dispatch) => ({
+  setAnimePage: (page: GetAnimePage["Page"]) => dispatch(setAnimePage(page)),
+});
 
 const HomePage = (props: IHomePageProps) => {
+  const { setAnimePage } = actionDisPatch(useAppDispatch());
   const fetchAnimePage = async () => {
     const animePage = await animeService
       .getAnimePage(0)
       .catch((err) => console.log("ERROR: ", err));
     if (animePage) {
       console.log("ANIME PAGE: ", animePage);
+      setAnimePage(animePage);
     }
   };
   useEffect(() => {
@@ -32,6 +38,7 @@ const HomePage = (props: IHomePageProps) => {
   return (
     <Container>
       <h1>Hot Anime</h1>
+      <HotAnime />
     </Container>
   );
 };
